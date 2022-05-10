@@ -25,3 +25,9 @@ table tr td {
 table tr td:last-child {
   border-right: none;
 }
+.block-on-click {
+  pointer-events: none;
+}
+button {
+  margin-top: 1em;
+}

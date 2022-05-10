@@ -1,7 +1,7 @@
 import React from 'react';
 import Td from './Td';
 
-const Tr = ({ trData, rowIndex, dispatch }) => {
+const Tr = ({ trData, msg, rowIndex, dispatch }) => {
   return (
     <tr>
       {

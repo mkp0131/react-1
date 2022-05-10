@@ -230,6 +230,151 @@ npm i babel/core babel/preset-env bable-loader
 - 리로딩: 새로고침한다.
 - 핫리로딩: 변경점만 새로고침한다.
 
-### require, import 차이
+### hook 에서 변수 사용
 
--
+- useRef 를 이용한다.
+- useRef 의 값이 변경되더라도 리랜더링 되지 않는다!
+- 사용할때는 .current 로 접근
+
+```js
+const Check = () => {
+  const [status, setStatus] = useState('Wait');
+  const [result, setResult] = useState([]);
+
+  const timer = useRef(null);
+  const start = useRef(0);
+
+  const checkInit = useCallback(() => {
+    timer.current = setTimeout(() => {
+      // .current 사용
+      setStatus('Check');
+      start = Date.now();
+    }, 3000);
+  });
+  // ...some code
+};
+```
+
+### 리액트 event 파라미터 함수에 넘기는 법
+
+- 첫번째 JSX 의 onClick 함수를 함수를 리턴하는 함수로 만든다.
+
+```js
+const onClick = (say) => (e) => {
+  e.preventDefault();
+}
+
+<button onClick={onClick('Hello')}>
+```
+
+- 두번째 JSX 의 onClick 함수를 함수로 감싸서 실행한다.
+
+```js
+<button onClick={(e) => onClick(e, 'Hello')}>
+```
+
+### Hook 에서 componentDidUpdate 만 사용하는 방법
+
+- componentDidUpdate
+
+```js
+const mounted = useRef(false);
+useEffect(() => {
+  if(!mounted.current) {
+    mounted.current = true;
+  }
+  else {
+    // ajax
+  }
+}, [변경되는 값])
+```
+
+- componentDidMount
+
+```js
+useEffect(() => {}, []);
+```
+
+### css 텍스트 선택 막기
+
+```css
+-webkit-touch-callout: none; /* iOS Safari */
+-webkit-user-select: none; /* Safari */
+-ms-user-select: none; /* 인터넷익스플로러 */
+user-select: none;
+```
+
+### useReducer
+
+- Redux 와 사용방법이 똑같다.
+- 컴포넌트 안에 useReducer() 를 사용하여 reducer 를 생성
+
+```js
+const Ttt = () => {
+  // useReducer 사용
+  const [state, dispatch] = useReducer(reducer, initState);
+  const { tableData } = state;
+
+  useEffect(() => {}, [tableData]);
+
+  return (
+    <>
+      <h1>틱택토</h1>
+      <Table tableData={tableData} dispatch={dispatch} />
+    </>
+  );
+};
+```
+
+- reducer() 와 initSate를 선언해준다.
+
+```js
+// useReducer 초기값 설정
+const initState = {
+  tableData: [
+    ['', '', ''],
+    ['', '', ''],
+    ['', '', ''],
+  ],
+  turn: 'O',
+};
+
+export const CLICK_TD = 'CLICK_TD';
+export const SET_TURN = 'SET_TURN';
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case CLICK_TD: {
+      const { rowIndex, colIndex } = action;
+      const tableData = [...state.tableData];
+      const trData = tableData[rowIndex];
+      trData[colIndex] = state.turn;
+
+      return {
+        ...state,
+        ...tableData,
+      };
+    }
+    case SET_TURN: {
+      return {
+        ...state,
+        turn: state.turn === 'O' ? 'X' : 'O',
+      };
+    }
+
+    default:
+      return state;
+  }
+};
+```
+
+- 사용법
+
+```js
+const Td = ({ tdData, rowIndex, colIndex, dispatch }) => {
+  const onClick = useCallback((e) => {
+    e.preventDefault();
+    if(tdData) return;
+    dispatch({type: CLICK_TD, rowIndex, colIndex});
+    dispatch({type: SET_TURN});
+```

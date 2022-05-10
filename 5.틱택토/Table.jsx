@@ -1,7 +1,7 @@
 import React from 'react';
 import Tr from './Tr';
 
-const Table = ({ tableData, dispatch }) => {
+const Table = ({ tableData, msg, dispatch }) => {
   return (
     <table>
       <tbody>

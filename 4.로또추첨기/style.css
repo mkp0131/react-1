@@ -1,0 +1,16 @@
+.lotto-list {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  gap: 10px;
+}
+
+.lotto-list li {
+  background: #eee;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
